@@ -50,13 +50,49 @@
     export default {
         data() {
             return {
-                poolProducts: []
+                poolProducts: [],
+                isLoggedIn: false,
+                name: "",
+                rules: ""
             };
         },
-        mounted() {
+        async mounted() {
             this.loadListProducts();
+
+            try {
+				await this.checkAuth();
+                
+				if (this.isLoggedIn) {
+                    if(this.rules == "user") {
+                        window.location.href = '/';
+                    }
+				    
+				}
+			} catch (error) {
+				console.error(error);
+			}
         },
         methods: {
+            async checkAuth() {
+				const response = await fetch(`/check_auth`, {
+					method: 'GET',
+				});
+
+				if (!response.ok) {
+					throw new Error('Не удалось получить данные о авторизации');
+				}
+
+				const data = await response.json();
+
+				if (data.isLoggedIn) {
+					this.isLoggedIn = true;
+					this.name = data.name;
+                    this.rules = data.rules;
+				} else {
+					this.isLoggedIn = false;
+					this.name = "";
+				}
+			},
             async loadListProducts() {
                 try {
                     const response = await fetch(`/get_all_products`, {
@@ -217,7 +253,6 @@
     th {
         background-color: #573232;
         border: 1px solid #ddd;
-        /* Добавляем границу для заголовков */
     }
 
     .button-add {
@@ -246,7 +281,6 @@
         border-radius: 5px;
         cursor: pointer;
         margin-right: 5px;
-        /* Добавляем отступ между кнопками */
     }
 
     .button-product-edit {
@@ -269,8 +303,6 @@
         width: 100%;
         padding: 5px;
         border: 1px solid #ddd;
-        /* Добавляем границу для ввода */
         border-radius: 5px;
-        /* Закругляем углы ввода */
     }
 </style>

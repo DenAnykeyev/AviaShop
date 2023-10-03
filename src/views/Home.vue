@@ -76,7 +76,6 @@
 
 	</div>
 </template>
-
 <script>
 </script>
 <style>
@@ -95,7 +94,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
-		/* Изменено с space-between на flex-start */
 		background-color: #bbb9b9;
 		border-radius: 10px;
 		padding: 20px;

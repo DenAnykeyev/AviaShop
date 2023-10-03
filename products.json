@@ -1,1 +1,44 @@
-[{"name":"Первый класс премиум","description":"Билет на самолет в первом классе с выбором места","price":50000,"photoUrl":"https://uniticket.ru/wp-content/uploads/2020/02/ot-klassa-zavisit-komfort-pereleta-i-stoimost-bileta-1024x780.png"},{"name":"Первый класс по скидке","description":"Билет на самолет в первом классе без выбора мест","price":40000,"photoUrl":"https://uniticket.ru/wp-content/uploads/2020/02/ot-klassa-zavisit-komfort-pereleta-i-stoimost-bileta-1024x780.png"},{"name":"Бизнес класс премиум","description":"Билет на самолет в бизнес классе с выбором мест","price":30000,"photoUrl":"https://uniticket.ru/wp-content/uploads/2020/02/dazhe-v-minimalistichnom-vide-pervyy-klass-vyglyadit-tak.jpg"},{"name":"Бизнес класс по скидке","description":"Билет на самолет в бизнес классе без выбора мест","price":25000,"photoUrl":"https://uniticket.ru/wp-content/uploads/2020/02/dazhe-v-minimalistichnom-vide-pervyy-klass-vyglyadit-tak.jpg"},{"name":"Эконом класс премиум","description":"Билет на самолет в эконом классе с выбором мест","price":15000,"photoUrl":"https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg"},{"name":"Эконом класс по скидке","description":"Билет на самолет в эконом классе без выбора мест","price":10000,"photoUrl":"https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg"},{"name":"Эконом класс ОЧЕНЬ","description":"Билет на самолет в эконом классе без выбора мест и обеда","price":7500,"photoUrl":"https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg"}]
+[
+    {
+        "name": "Первый класс премиум",
+        "description": "Билет на самолет в первом классе с выбором места",
+        "price": 50000,
+        "photoUrl": "https://uniticket.ru/wp-content/uploads/2020/02/ot-klassa-zavisit-komfort-pereleta-i-stoimost-bileta-1024x780.png"
+    },
+    {
+        "name": "Первый класс по скидке",
+        "description": "Билет на самолет в первом классе без выбора мест",
+        "price": 40000,
+        "photoUrl": "https://uniticket.ru/wp-content/uploads/2020/02/ot-klassa-zavisit-komfort-pereleta-i-stoimost-bileta-1024x780.png"
+    },
+    {
+        "name": "Бизнес класс премиум",
+        "description": "Билет на самолет в бизнес классе с выбором мест",
+        "price": 30000,
+        "photoUrl": "https://uniticket.ru/wp-content/uploads/2020/02/dazhe-v-minimalistichnom-vide-pervyy-klass-vyglyadit-tak.jpg"
+    },
+    {
+        "name": "Бизнес класс по скидке",
+        "description": "Билет на самолет в бизнес классе без выбора мест",
+        "price": 25000,
+        "photoUrl": "https://uniticket.ru/wp-content/uploads/2020/02/dazhe-v-minimalistichnom-vide-pervyy-klass-vyglyadit-tak.jpg"
+    },
+    {
+        "name": "Эконом класс премиум",
+        "description": "Билет на самолет в эконом классе с выбором мест",
+        "price": 15000,
+        "photoUrl": "https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg"
+    },
+    {
+        "name": "Эконом класс по скидке",
+        "description": "Билет на самолет в эконом классе без выбора мест",
+        "price": 10000,
+        "photoUrl": "https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg"
+    },
+    {
+        "name": "Эконом класс ОЧЕНЬ",
+        "description": "Билет на самолет в эконом классе без выбора мест и обеда",
+        "price": 7500,
+        "photoUrl": "https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg"
+    }
+]
