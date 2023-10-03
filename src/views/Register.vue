@@ -18,7 +18,7 @@
 	<div class="text-center">
 		<h1>Или</h1>
 
-		<button class="btn btn-primary ">
+		<button class="btn  text-white">
 			<router-link class="nav-link" to="/login">Я уже зарегистрирован </router-link>
 		</button>
 	</div>
