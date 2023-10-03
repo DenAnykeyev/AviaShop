@@ -199,7 +199,6 @@ func main() {
 		}
 
 		sess, _ := session.Get("session", c)
-		fmt.Print(c)
 
 		sess.Values["name"] = newUser.Name
 		sess.Values["rules"] = newUser.Rules
@@ -240,9 +239,6 @@ func main() {
 
 		var foundUser *User
 		for _, user := range users {
-			fmt.Println(user.Name)
-			fmt.Println(username)
-			fmt.Println(user.Name == username)
 			if user.Name == username {
 				foundUser = &user
 				break
