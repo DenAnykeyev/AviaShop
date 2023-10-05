@@ -45,21 +45,47 @@
 			<p v-else>Нет доступных товаров</p>
 		</div>
 	</div>
+	<div>lol {{ name }}</div>
 </template>
 <script>
 export default {
 	data() {
 		return {
+			// Для view
 			products: [],
 			currentPage: 1,
 			totalPages: 0,
+
+			// Для logic
+			isLoggedIn: false,
+			id: "",
+			name: ""
 		};
 	},
 	mounted() {
 		this.getProducts(1);
 		this.getTotalPages();
+
+		this.checkAuth();
 	},
 	methods: {
+		async checkAuth() {
+			const response = await fetch(`/check_auth`, {
+				method: 'GET',
+			});
+
+			if (!response.ok) {
+				throw new Error('Не удалось получить данные о авторизации');
+			}
+
+			const data = await response.json();
+
+			if (data.isLoggedIn) {
+				this.isLoggedIn = true;
+				this.name = data.name;
+				this.rules = data.rules;
+			}
+		},
 		async changePage(page) {
 			this.currentPage = page;
 			await this.getProducts(page);
@@ -89,6 +115,7 @@ export default {
 
 				const data = await response.json();
 				const formattedData = data.map((product) => ({
+					id: product.id,
 					name: product.name,
 					description: product.description,
 					price: product.price,
@@ -101,7 +128,13 @@ export default {
 			}
 		},
 		addToBasket(productId) {
-			// Отправьте POST-запрос на сервер, чтобы добавить товар в корзину
+			if(!this.isLoggedIn) {
+				alert("Вы не вошли в аккаунт!")
+				
+				return;
+			}
+
+			alert(productId)
 			fetch('/add_product_in_basket', {
 				method: 'POST',
 				headers: {

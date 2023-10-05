@@ -113,15 +113,22 @@ func registerUserHandler(c echo.Context, db *sql.DB) error {
 		return c.String(http.StatusBadRequest, "Что-то не так...")
 	}
 
-	if err := addUserToDB(db, newUser); err != nil {
+	// Insert the new user into the database
+	result, err := addUserToDB(db, newUser)
+	if err != nil {
 		if strings.Contains(err.Error(), "уже существует") {
 			return c.String(http.StatusBadRequest, "Пользователь с таким именем уже существует!")
 		}
 		return c.String(http.StatusInternalServerError, "Ошибка при сохранении пользователя в базе данных")
 	}
 
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Ошибка при получении ID пользователя")
+	}
+
 	sess, _ := session.Get("session", c)
 
+	sess.Values["id"] = result
 	sess.Values["name"] = newUser.Name
 	sess.Values["rules"] = newUser.Rules
 
@@ -135,8 +142,8 @@ func registerUserHandler(c echo.Context, db *sql.DB) error {
 // Функция обработки запроса на проверку авторизации пользователя
 func checkAuthUserHandler(c echo.Context, db *sql.DB) error {
 	sess, _ := session.Get("session", c)
-	name, ok2 := sess.Values["name"].(string)
-	rules, ok3 := sess.Values["rules"].(string)
+	name, ok1 := sess.Values["name"].(string)
+	rules, ok2 := sess.Values["rules"].(string)
 
 	type resp struct {
 		IsLoggedIn bool   `json:"isLoggedIn"`
@@ -144,7 +151,7 @@ func checkAuthUserHandler(c echo.Context, db *sql.DB) error {
 		Rules      string `json:"rules"`
 	}
 
-	if ok2 && ok3 {
+	if ok1 && ok2 {
 		return c.JSON(http.StatusOK, resp{IsLoggedIn: true, Name: name, Rules: rules})
 	}
 	return c.JSON(http.StatusOK, resp{IsLoggedIn: false})
@@ -172,6 +179,7 @@ func loginUserHandler(c echo.Context, db *sql.DB) error {
 
 	sess, _ := session.Get("session", c)
 
+	sess.Values["id"] = dbUser.Id
 	sess.Values["name"] = dbUser.Name
 	sess.Values["rules"] = dbUser.Rules
 

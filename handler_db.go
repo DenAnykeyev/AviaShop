@@ -29,7 +29,7 @@ func getAllProductsFromDB(db *sql.DB) ([]Product, error) {
 
 func getProductsFromDB(db *sql.DB, page int, pageSize int) ([]Product, error) {
 	offset := (page - 1) * pageSize
-	query := fmt.Sprintf("SELECT name, description, price, photoUrl FROM products LIMIT %d, %d", offset, pageSize)
+	query := fmt.Sprintf("SELECT id, name, description, price, photoUrl FROM products LIMIT %d, %d", offset, pageSize)
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func getProductsFromDB(db *sql.DB, page int, pageSize int) ([]Product, error) {
 
 	for rows.Next() {
 		var product Product
-		err := rows.Scan(&product.Name, &product.Description, &product.Price, &product.PhotoUrl)
+		err := rows.Scan(&product.Id, &product.Name, &product.Description, &product.Price, &product.PhotoUrl)
 		if err != nil {
 			return nil, err
 		}
@@ -109,8 +109,21 @@ func deleteProductInDB(db *sql.DB, id int) error {
 }
 
 func addProductToDB(db *sql.DB, newProduct Product) error {
-	_, err := db.Exec("INSERT INTO products (name, description, price, photoUrl) VALUES (?, ?, ?, ?)",
+	_, err := db.Exec(
+		"INSERT INTO products (name, description, price, photoUrl) VALUES (?, ?, ?, ?)",
 		newProduct.Name, newProduct.Description, newProduct.Price, newProduct.PhotoUrl)
+
+	// Обновляем значения столбца id для оставшихся записей в таблице
+	_, err = db.Exec("SET @new_id := 0")
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("UPDATE products SET id = (@new_id := @new_id + 1) ORDER BY id")
+	if err != nil {
+		return err
+	}
+
 	if err != nil {
 		return err
 	}
@@ -118,28 +131,33 @@ func addProductToDB(db *sql.DB, newProduct Product) error {
 	return nil
 }
 
-func addUserToDB(db *sql.DB, newUser User) error {
+func addUserToDB(db *sql.DB, newUser User) (int64, error) {
 	var existingUser User
 	err := db.QueryRow("SELECT * FROM users WHERE name=?", newUser.Name).Scan(&existingUser.Name, &existingUser.Password, &existingUser.Rules)
 
 	if err == nil {
-		return fmt.Errorf("Пользователь с именем %s уже существует", newUser.Name)
+		return 0, fmt.Errorf("Пользователь с именем %s уже существует", newUser.Name)
 	} else if err != sql.ErrNoRows {
-		return err
+		return 0, err
 	}
 
-	_, err = db.Exec("INSERT INTO users (name, password, rules) VALUES (?, ?, ?)",
+	result, err := db.Exec("INSERT INTO users (name, password, rules) VALUES (?, ?, ?)",
 		newUser.Name, newUser.Password, newUser.Rules)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	userId, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return userId, nil
 }
 
 func loginUserFromDB(db *sql.DB, username, password string) (*User, error) {
 	var user User
-	err := db.QueryRow("SELECT name, rules FROM users WHERE name = ? AND password = ?", username, password).Scan(&user.Name, &user.Rules)
+	err := db.QueryRow("SELECT id, name, rules FROM users WHERE name = ? AND password = ?", username, password).Scan(&user.Id, &user.Name, &user.Rules)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("Неверное имя пользователя или пароль")
