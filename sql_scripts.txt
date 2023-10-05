@@ -1,5 +1,5 @@
 create table if not exists shop.products(
-	id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     price INT NOT NULL,
@@ -7,16 +7,32 @@ create table if not exists shop.products(
 );
 
 create table if not exists shop.users(
-	id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     rules VARCHAR(255) NOT NULL
 );
 
 create table shop.baskets(
-	id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     product_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+
+
+INSERT INTO shop.products (name, description, price, photoUrl)
+VALUES
+    ('Первый класс премиум', 'Билет на самолет в первом классе с выбором места', 50000, 'https://uniticket.ru/wp-content/uploads/2020/02/ot-klassa-zavisit-komfort-pereleta-i-stoimost-bileta-1024x780.png'),
+    ('Первый класс по скидке', 'Билет на самолет в первом классе без выбора мест', 40000, 'https://uniticket.ru/wp-content/uploads/2020/02/ot-klassa-zavisit-komfort-pereleta-i-stoimost-bileta-1024x780.png'),
+    ('Бизнес класс премиум', 'Билет на самолет в бизнес классе с выбором мест', 30000, 'https://uniticket.ru/wp-content/uploads/2020/02/dazhe-v-minimalistichnom-vide-pervyy-klass-vyglyadit-tak.jpg'),
+    ('Бизнес класс по скидке', 'Билет на самолет в бизнес классе без выбора мест', 25000, 'https://uniticket.ru/wp-content/uploads/2020/02/dazhe-v-minimalistichnom-vide-pervyy-klass-vyglyadit-tak.jpg'),
+    ('Эконом класс премиум', 'Билет на самолет в эконом классе с выбором мест', 15000, 'https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg'),
+    ('Эконом класс по скидке', 'Билет на самолет в эконом классе без выбора мест', 10000, 'https://www.aeroflot.ru/media/aflfiles/category_pictures/flight/01_041_headers_3_classes_class_econom.jpg');
+
+INSERT INTO shop.users (name, password, rules)
+VALUES
+    ('denis', '123', 'admin'),
+    ('timur', 'pass', 'user');
