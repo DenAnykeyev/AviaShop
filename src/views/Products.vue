@@ -127,31 +127,41 @@ export default {
 				console.error(error);
 			}
 		},
-		addToBasket(productId) {
-			if(!this.isLoggedIn) {
+		async addToBasket(productId) {
+			if (!this.isLoggedIn) {
 				alert("Вы не вошли в аккаунт!")
-				
+
 				return;
 			}
 
-			alert(productId)
-			fetch('/add_product_in_basket', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ productId }),
-			})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Не удалось добавить товар в корзину.');
-					}
-					alert('Товар добавлен в корзину!');
-				})
-				.catch(error => {
-					console.error(error);
-					alert('Не удалось добавить товар в корзину.');
+			alert("1!")
+
+
+			const partBasket = {
+				name: this.name,
+				productId: productId
+			};
+
+			try {
+				const response = await fetch('/add_product_in_basket', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(partBasket),
 				});
+
+				if (!response.ok) {
+					const errorText = await response.text();
+					throw new Error(errorText);
+				}
+
+				alert("Товар добавлен в корзину!")
+			} catch (error) {
+				alert(error);
+
+				throw error;
+			}
 		},
 	},
 };

@@ -42,7 +42,7 @@ import { RouterLink, RouterView } from 'vue-router'
 						</button>
 					</div>
 
-					<button v-else class="btn btn-primary ms-auto bi bi-door-closed" @click="logout"> {{ name }}</button>
+					<button v-else class="btn btn-primary ms-auto bi bi-door-closed" @click="logout"> {{ name }} {{ basket }}</button>
 				</div>
 			</div>
 		</nav>
@@ -51,6 +51,7 @@ import { RouterLink, RouterView } from 'vue-router'
 		<RouterView />
 	</main>
 	<footer>
+		
 	</footer>
 </template>
 <script>

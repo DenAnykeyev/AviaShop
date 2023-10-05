@@ -87,14 +87,12 @@ func editProductInDB(db *sql.DB, index int, newName string, newDescription strin
 }
 
 func deleteProductInDB(db *sql.DB, id int) error {
-	// Удаляем запись с заданным id из таблицы
 	query := "DELETE FROM products WHERE id=?"
 	_, err := db.Exec(query, id)
 	if err != nil {
 		return err
 	}
 
-	// Обновляем значения столбца id для оставшихся записей в таблице
 	_, err = db.Exec("SET @new_id := 0")
 	if err != nil {
 		return err
@@ -113,7 +111,6 @@ func addProductToDB(db *sql.DB, newProduct Product) error {
 		"INSERT INTO products (name, description, price, photoUrl) VALUES (?, ?, ?, ?)",
 		newProduct.Name, newProduct.Description, newProduct.Price, newProduct.PhotoUrl)
 
-	// Обновляем значения столбца id для оставшихся записей в таблице
 	_, err = db.Exec("SET @new_id := 0")
 	if err != nil {
 		return err
@@ -165,4 +162,13 @@ func loginUserFromDB(db *sql.DB, username, password string) (*User, error) {
 		return nil, fmt.Errorf("Ошибка при выполнении запроса")
 	}
 	return &user, nil
+}
+
+func getUserIDByName(db *sql.DB, userName string) (int, error) {
+	var userID int
+	err := db.QueryRow("SELECT id FROM users WHERE name = ?", userName).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
 }

@@ -188,25 +188,61 @@ func loginUserHandler(c echo.Context, db *sql.DB) error {
 	return c.String(http.StatusOK, "Вход выполнен успешно")
 }
 
-/*
 func addProductToBasketHandler(c echo.Context, db *sql.DB) error {
-	// Разберите идентификатор товара из запроса
 	var request struct {
-		ProductID int `json:"productId"`
+		UserName  string `json:"name"`
+		ProductID int    `json:"productId"`
 	}
+
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Неверный запрос"})
 	}
 
-	// Проверьте, аутентифицирован ли пользователь (вы можете реализовать эту логику)
-	// Например, вы можете получить информацию о пользователе из сессии
+	userID, err := getUserIDByName(db, request.UserName)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Не удалось получить ID пользователя"})
+	}
 
-	// Вставьте товар в таблицу корзины
-	_, err := db.Exec("INSERT INTO baskets (user_id, product_id) VALUES (?, ?)", userID, request.ProductID)
+	_, err = db.Exec("INSERT INTO baskets (user_id, product_id) VALUES (?, ?)", userID, request.ProductID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Не удалось добавить товар в корзину"})
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "Товар добавлен в корзину"})
 }
-*/
+
+func getBasketUserHandler(c echo.Context, db *sql.DB) error {
+	sess, _ := session.Get("session", c)
+	name, ok1 := sess.Values["name"].(string)
+
+	if !ok1 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Имя пользователя не найдено в сессии"})
+	}
+
+	userID, err := getUserIDByName(db, name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Не удалось получить ID пользователя"})
+	}
+
+	// Запрашиваем товары в корзине пользователя из базы данных
+	rows, err := db.Query("SELECT product_id FROM baskets WHERE user_id = ?", userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Не удалось получить товары из корзины"})
+	}
+	defer rows.Close()
+
+	// Создаем срез для хранения ID товаров
+	var productIDs []int
+
+	// Итерируемся по результатам запроса и добавляем ID товаров в срез
+	for rows.Next() {
+		var productID int
+		if err := rows.Scan(&productID); err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при сканировании результатов запроса"})
+		}
+		productIDs = append(productIDs, productID)
+	}
+
+	// Возвращаем список ID товаров в корзине пользователя
+	return c.JSON(http.StatusOK, map[string][]int{"productIDs": productIDs})
+}
