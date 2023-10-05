@@ -2,8 +2,8 @@
 </script>
 
 <template>
+	<h1 class="text-center">Авиакасса</h1>
 	<div class="my-box">
-		<h1 class="text-center">О нас</h1>
 		<p class="text-center">Немного о нашей компании<br>В нашем штате трудятся порядка ста высококвалифицированных
 			сотрудников...</p>
 	</div>

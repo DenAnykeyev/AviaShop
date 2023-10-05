@@ -197,7 +197,7 @@
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
                         body: new URLSearchParams({
-                            index: product.index,
+                            index: product.index + 1,
                         }),
                     });
                 } catch (error) {

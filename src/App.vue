@@ -30,11 +30,15 @@ import { RouterLink, RouterView } from 'vue-router'
 						<li v-if="this.isAdmin === true" class="nav-item">
 							<router-link class="nav-link" to="/products_edit">Редактор товаров</router-link>
 						</li>
+						<li class="nav-item">
+							<router-link class="nav-link" to="/basket">Корзина</router-link>
+						</li>
 					</ul>
 
 					<div v-if="isLoggedIn === false" class="d-flex align-items-center ms-auto">
 						<button class="btn btn-primary">
-							<router-link class="nav-link" to="/register"> <i class="bi bi-person-plus"></i> Войти </router-link>
+							<router-link class="nav-link" to="/register"> <i class="bi bi-person-plus"></i> Войти
+							</router-link>
 						</button>
 					</div>
 
@@ -78,7 +82,7 @@ export default {
 				this.isLoggedIn = true;
 				this.name = data.name;
 				this.rules = data.rules;
-				if(this.rules == "admin") {
+				if (this.rules == "admin") {
 					this.isAdmin = true;
 				}
 			} else {
@@ -88,22 +92,25 @@ export default {
 		},
 
 		async logout() {
-			try {
-				const response = await fetch("/logout_user", {
-					method: "POST",
-				});
+			const confirmDelete = confirm('Вы уверены, что хотите выйти из аккаунта?');
+			if (confirmDelete) {
+				try {
+					const response = await fetch("/logout_user", {
+						method: "POST",
+					});
 
-				if (response.ok) {
-					this.isLoggedIn = false;
-					this.name = "";
+					if (response.ok) {
+						this.isLoggedIn = false;
+						this.name = "";
 
-					window.location.reload();
-				} else {
-					alert("Ошибка выхода из аккаунта");
+						window.location.reload();
+					} else {
+						alert("Ошибка выхода из аккаунта");
+					}
+
+				} catch (error) {
+					alert("Ошибка выхода из аккаунта", error);
 				}
-
-			} catch (error) {
-				alert("Ошибка выхода из аккаунта", error);
 			}
 		},
 	},

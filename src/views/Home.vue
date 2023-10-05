@@ -3,6 +3,7 @@
 
 <template>
 	<div class="container">
+		<h1 class="text-center">Авиакасса</h1>
 		<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
 			<div class="carousel-indicators">
 				<button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
@@ -48,7 +49,6 @@
 		</div>
 		<div class="my-box">
 			<div class="text-center">
-				<h1 class="text-center">Авиакасса</h1>
 				<p class="text-center">Добро пожаловать!<br>Мы занимаемся тем, что продаем авиабилеты на любые рейсы...
 				</p>
 				<img src="assets/img/main.png" class="img-fluid rounded">
