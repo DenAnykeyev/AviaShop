@@ -45,7 +45,6 @@
 			<p v-else>Нет доступных товаров</p>
 		</div>
 	</div>
-	<div>lol {{ name }}</div>
 </template>
 <script>
 export default {
@@ -62,7 +61,7 @@ export default {
 			name: ""
 		};
 	},
-	mounted() {
+	async mounted() {
 		this.getProducts(1);
 		this.getTotalPages();
 
@@ -133,9 +132,6 @@ export default {
 
 				return;
 			}
-
-			alert("1!")
-
 
 			const partBasket = {
 				name: this.name,

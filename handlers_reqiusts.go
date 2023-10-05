@@ -231,18 +231,26 @@ func getBasketUserHandler(c echo.Context, db *sql.DB) error {
 	}
 	defer rows.Close()
 
-	// Создаем срез для хранения ID товаров
-	var productIDs []int
+	// Создаем срез для хранения продуктов
+	var products []Product
 
-	// Итерируемся по результатам запроса и добавляем ID товаров в срез
 	for rows.Next() {
 		var productID int
 		if err := rows.Scan(&productID); err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при сканировании результатов запроса"})
 		}
-		productIDs = append(productIDs, productID)
+
+		var product Product
+		err := db.QueryRow("SELECT id, name, price, photoUrl, description FROM products WHERE id = ?", productID).
+			Scan(&product.Id, &product.Name, &product.Price, &product.PhotoUrl, &product.Description)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Ошибка при получении данных о продукте"})
+		}
+
+		products = append(products, product)
 	}
 
-	// Возвращаем список ID товаров в корзине пользователя
-	return c.JSON(http.StatusOK, map[string][]int{"productIDs": productIDs})
+	// Возвращаем список продуктов в корзине пользователя
+	return c.JSON(http.StatusOK, products)
 }

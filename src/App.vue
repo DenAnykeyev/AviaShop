@@ -31,7 +31,7 @@ import { RouterLink, RouterView } from 'vue-router'
 							<router-link class="nav-link" to="/products_edit">Редактор товаров</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link class="nav-link" to="/basket">Корзина</router-link>
+							<router-link class="nav-link" to="/basket">Корзина +{{ this.basket }}</router-link>
 						</li>
 					</ul>
 
@@ -42,7 +42,7 @@ import { RouterLink, RouterView } from 'vue-router'
 						</button>
 					</div>
 
-					<button v-else class="btn btn-primary ms-auto bi bi-door-closed" @click="logout"> {{ name }} {{ basket }}</button>
+					<button v-else class="btn btn-primary ms-auto bi bi-door-closed" @click="logout"> {{ name }}</button>
 				</div>
 			</div>
 		</nav>
@@ -61,13 +61,31 @@ export default {
 			isLoggedIn: false,
 			name: "",
 			rules: "",
-			isAdmin: false
+			isAdmin: false,
+			basket: 0
 		};
 	},
 	mounted() {
 		this.checkAuth();
+		this.getBasketInteger();
 	},
 	methods: {
+		async getBasketInteger() {
+			const response = await fetch(`/get_basket_user`, {
+				method: 'GET',
+			});
+
+			if (!response.ok) {
+				throw new Error('Не удалось получить данные о авторизации');
+			}
+
+			const data = await response.json();
+
+			var basketLength = data.length;
+
+			this.basket = basketLength
+		},
+
 		async checkAuth() {
 			const response = await fetch(`/check_auth`, {
 				method: 'GET',
