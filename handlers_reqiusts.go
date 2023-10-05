@@ -121,6 +121,7 @@ func registerUserHandler(c echo.Context, db *sql.DB) error {
 	}
 
 	sess, _ := session.Get("session", c)
+
 	sess.Values["name"] = newUser.Name
 	sess.Values["rules"] = newUser.Rules
 
@@ -134,8 +135,8 @@ func registerUserHandler(c echo.Context, db *sql.DB) error {
 // Функция обработки запроса на проверку авторизации пользователя
 func checkAuthUserHandler(c echo.Context, db *sql.DB) error {
 	sess, _ := session.Get("session", c)
-	name, ok1 := sess.Values["name"].(string)
-	rules, ok2 := sess.Values["rules"].(string)
+	name, ok2 := sess.Values["name"].(string)
+	rules, ok3 := sess.Values["rules"].(string)
 
 	type resp struct {
 		IsLoggedIn bool   `json:"isLoggedIn"`
@@ -143,7 +144,7 @@ func checkAuthUserHandler(c echo.Context, db *sql.DB) error {
 		Rules      string `json:"rules"`
 	}
 
-	if ok1 && ok2 {
+	if ok2 && ok3 {
 		return c.JSON(http.StatusOK, resp{IsLoggedIn: true, Name: name, Rules: rules})
 	}
 	return c.JSON(http.StatusOK, resp{IsLoggedIn: false})
@@ -170,9 +171,34 @@ func loginUserHandler(c echo.Context, db *sql.DB) error {
 	}
 
 	sess, _ := session.Get("session", c)
+
 	sess.Values["name"] = dbUser.Name
 	sess.Values["rules"] = dbUser.Rules
+
 	sess.Save(c.Request(), c.Response())
 
 	return c.String(http.StatusOK, "Вход выполнен успешно")
 }
+
+/*
+func addProductToBasketHandler(c echo.Context, db *sql.DB) error {
+	// Разберите идентификатор товара из запроса
+	var request struct {
+		ProductID int `json:"productId"`
+	}
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Неверный запрос"})
+	}
+
+	// Проверьте, аутентифицирован ли пользователь (вы можете реализовать эту логику)
+	// Например, вы можете получить информацию о пользователе из сессии
+
+	// Вставьте товар в таблицу корзины
+	_, err := db.Exec("INSERT INTO baskets (user_id, product_id) VALUES (?, ?)", userID, request.ProductID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Не удалось добавить товар в корзину"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Товар добавлен в корзину"})
+}
+*/

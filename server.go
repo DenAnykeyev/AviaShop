@@ -85,7 +85,7 @@ func main() {
 	})
 
 	e.POST("/add_product_in_basket", func(c echo.Context) error {
-		return nil
+		return nil //addProductToBasketHandler(c, db)
 	})
 
 	e.GET("*", func(c echo.Context) error {

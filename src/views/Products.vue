@@ -33,7 +33,7 @@
 								<div class="flex-grow-1"></div>
 								<div class="d-flex justify-content-end">
 									<div class="product-price">Цена: <strong>{{ product.price }}</strong></div>
-									<button class="btn btn-warning" title="В корзину" @click="addToBasket">
+									<button class="btn btn-warning" title="В корзину" @click="addToBasket(product.id)">
 										<i class="bi bi-cart"></i> <span class="d-none d-md-inline">В корзину</span>
 									</button>
 								</div>
@@ -47,83 +47,100 @@
 	</div>
 </template>
 <script>
-	export default {
-		data() {
-			return {
-				products: [],
-				currentPage: 1,
-				totalPages: 0, 
-			};
+export default {
+	data() {
+		return {
+			products: [],
+			currentPage: 1,
+			totalPages: 0,
+		};
+	},
+	mounted() {
+		this.getProducts(1);
+		this.getTotalPages();
+	},
+	methods: {
+		async changePage(page) {
+			this.currentPage = page;
+			await this.getProducts(page);
 		},
-		mounted() {
-			this.getProducts(1);  
-			this.getTotalPages(); 
-		},
-		methods: {
-			addToBasket() {
-				alert("Товар добавлен в корзину!");
-			},
-			async changePage(page) {
-				this.currentPage = page; 
-				await this.getProducts(page); 
-			},
-			async getTotalPages() {
-				try {
-					const response = await fetch('/get_total_pages', {
-						method: 'GET',
-					});
-					if (!response.ok) {
-						throw new Error('Не удалось получить общее количество страниц.');
-					}
-					this.totalPages = await response.json();
-				} catch (error) {
-					console.error(error);
+		async getTotalPages() {
+			try {
+				const response = await fetch('/get_total_pages', {
+					method: 'GET',
+				});
+				if (!response.ok) {
+					throw new Error('Не удалось получить общее количество страниц.');
 				}
-			},
-			async getProducts(page) {
-				try {
-					const response = await fetch(`/get_products?page=${page}`, {
-						method: 'GET',
-					});
-
-					if (!response.ok) {
-						throw new Error('Не удалось получить данные о продуктах');
-					}
-
-					const data = await response.json();
-					const formattedData = data.map((product) => ({
-						name: product.name,
-						description: product.description,
-						price: product.price,
-						photoUrl: product.photoUrl
-					}));
-
-					this.products = formattedData;
-				} catch (error) {
-					console.error(error);
-				}
+				this.totalPages = await response.json();
+			} catch (error) {
+				console.error(error);
 			}
 		},
-	};
+		async getProducts(page) {
+			try {
+				const response = await fetch(`/get_products?page=${page}`, {
+					method: 'GET',
+				});
+
+				if (!response.ok) {
+					throw new Error('Не удалось получить данные о продуктах');
+				}
+
+				const data = await response.json();
+				const formattedData = data.map((product) => ({
+					name: product.name,
+					description: product.description,
+					price: product.price,
+					photoUrl: product.photoUrl
+				}));
+
+				this.products = formattedData;
+			} catch (error) {
+				console.error(error);
+			}
+		},
+		addToBasket(productId) {
+			// Отправьте POST-запрос на сервер, чтобы добавить товар в корзину
+			fetch('/add_product_in_basket', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ productId }),
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Не удалось добавить товар в корзину.');
+					}
+					alert('Товар добавлен в корзину!');
+				})
+				.catch(error => {
+					console.error(error);
+					alert('Не удалось добавить товар в корзину.');
+				});
+		},
+	},
+};
 </script>
 <style>
-	.page-button {
-		background-color: #007bff;
-		color: #fff;
-		border: none;
-		padding: 8px 16px;
-		margin: 2px;
-		cursor: pointer;
-		border-radius: 4px;
-	}
+.page-button {
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	padding: 8px 16px;
+	margin: 2px;
+	cursor: pointer;
+	border-radius: 4px;
+}
 
-	.active-page {
-		background-color: #0056b3;
-	}
+.active-page {
+	background-color: #0056b3;
+}
 
-	.pagination {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 </style>
